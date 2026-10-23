@@ -592,9 +592,9 @@ p {
 .project-card {
   position: relative;
   display: grid;
-  grid-template-columns: 115px minmax(0, 1fr);
+  grid-template-columns: 90px minmax(0, 1fr) minmax(250px, 0.72fr);
   gap: 14px;
-  min-height: 257px;
+  min-height: 245px;
   padding: 26px 30px 25px 25px;
   overflow: hidden;
   border: 1px solid var(--line);
@@ -722,6 +722,220 @@ p {
   padding: 4px 7px;
 }
 
+.project-visit-link {
+  min-height: 36px;
+  margin-top: 14px;
+  padding: 0 12px;
+  font-size: 10px;
+}
+
+.project-gallery {
+  z-index: 1;
+  position: relative;
+  align-self: center;
+  min-width: 0;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--surface-soft);
+}
+
+.gallery-image-button {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.gallery-image-button > img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.gallery-image-button:focus-visible {
+  position: relative;
+  z-index: 1;
+  outline-offset: -3px;
+}
+
+.project-gallery-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 9px;
+  padding: 18px;
+  color: var(--muted);
+  text-align: center;
+}
+
+.project-gallery-empty > span,
+.demo-card-kicker {
+  font-family: var(--mono);
+  font-size: 8px;
+  letter-spacing: 0.7px;
+}
+
+.project-gallery-empty p {
+  max-width: 220px;
+  margin: 0;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.project-gallery-empty code {
+  color: var(--ink);
+  font-family: var(--mono);
+  font-size: 9px;
+}
+
+.gallery-arrow {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  width: 29px;
+  height: 29px;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 50%;
+  background: rgba(25, 28, 24, 0.68);
+  color: white;
+  cursor: pointer;
+  font-size: 21px;
+  line-height: 1;
+  transform: translateY(-50%);
+}
+
+.gallery-previous {
+  left: 9px;
+}
+
+.gallery-next {
+  right: 9px;
+}
+
+.gallery-pagination {
+  position: absolute;
+  right: 0;
+  bottom: 9px;
+  left: 0;
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+}
+
+.gallery-pagination button {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border: 1px solid white;
+  border-radius: 50%;
+  background: rgba(25, 28, 24, 0.55);
+  cursor: pointer;
+}
+
+.gallery-pagination button.is-active {
+  background: white;
+}
+
+.gallery-lightbox {
+  z-index: 100;
+  position: fixed;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 24px;
+  background: rgba(9, 11, 8, 0.92);
+}
+
+.lightbox-dialog {
+  display: flex;
+  width: min(1200px, 100%);
+  max-height: 100%;
+  flex-direction: column;
+  color: #f5f5f0;
+}
+
+.lightbox-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 48px;
+  font-size: 12px;
+}
+
+.lightbox-close,
+.lightbox-arrow {
+  display: grid;
+  flex: 0 0 auto;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  border-radius: 50%;
+  background: rgba(25, 28, 24, 0.72);
+  color: white;
+  cursor: pointer;
+}
+
+.lightbox-close {
+  width: 38px;
+  height: 38px;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.lightbox-stage {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 0;
+  flex: 1;
+}
+
+.lightbox-stage > img {
+  display: block;
+  width: auto;
+  height: auto;
+  max-width: 100%;
+  max-height: calc(100dvh - 145px);
+  object-fit: contain;
+}
+
+.lightbox-arrow {
+  width: 42px;
+  height: 42px;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.lightbox-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 9px;
+  min-height: 38px;
+  padding-top: 14px;
+}
+
+.lightbox-pagination button {
+  width: 9px;
+  height: 9px;
+  padding: 0;
+  border: 1px solid white;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.lightbox-pagination button.is-active {
+  background: white;
+}
+
 .project-decoration {
   position: absolute;
   top: 50%;
@@ -767,6 +981,86 @@ p {
 
 .project-lavender {
   --project-color: #b2a2d1;
+}
+
+.demos-section {
+  padding-top: 20px;
+  padding-bottom: 108px;
+}
+
+.demo-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 15px;
+}
+
+.demo-card {
+  display: flex;
+  min-width: 0;
+  overflow: hidden;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: 3px;
+  background: var(--surface);
+}
+
+.demo-card .project-gallery {
+  width: 100%;
+  align-self: stretch;
+  aspect-ratio: 16 / 10;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+}
+
+.demo-content {
+  display: flex;
+  align-items: flex-start;
+  flex: 1;
+  flex-direction: column;
+  padding: 20px;
+}
+
+.demo-card-kicker {
+  margin-bottom: 11px;
+  color: var(--muted);
+}
+
+.demo-content h3 {
+  margin: 0 0 8px;
+  font-family: var(--heading);
+  font-size: 17px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+}
+
+.demo-content > p {
+  min-height: 60px;
+  margin-bottom: 15px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.7;
+}
+
+.demo-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 19px;
+  color: var(--ink);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.demo-link .arrow-icon {
+  width: 13px;
+  height: 13px;
+}
+
+.demo-link-pending {
+  color: var(--muted);
+  font-weight: 500;
 }
 
 .about-section {
@@ -1435,6 +1729,16 @@ p {
     right: 18px;
     opacity: 0.45;
   }
+
+  .project-card {
+    grid-template-columns: 45px minmax(0, 1fr) minmax(190px, 0.7fr);
+    gap: 10px;
+    padding: 22px 19px;
+  }
+
+  .demo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 640px) {
@@ -1470,7 +1774,7 @@ p {
     font-size: 10px;
   }
 
-  .main-nav a:nth-child(2) {
+  .main-nav a:nth-child(4) {
     display: none;
   }
 
@@ -1573,6 +1877,30 @@ p {
     padding: 20px 15px 18px;
   }
 
+  .project-card .project-gallery {
+    grid-column: 2;
+    width: 100%;
+    margin-top: 9px;
+  }
+
+  .gallery-lightbox {
+    padding: 12px;
+  }
+
+  .lightbox-stage {
+    gap: 8px;
+  }
+
+  .lightbox-stage > img {
+    max-width: calc(100vw - 108px);
+    max-height: calc(100dvh - 125px);
+  }
+
+  .lightbox-arrow {
+    width: 34px;
+    height: 34px;
+  }
+
   .project-side {
     justify-content: flex-start;
     gap: 22px;
@@ -1614,6 +1942,24 @@ p {
     height: 56px;
     font-size: 18px;
     opacity: 0.26;
+  }
+
+  .demos-section {
+    padding-top: 0;
+    padding-bottom: 75px;
+  }
+
+  .demo-grid {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .demo-content {
+    padding: 18px;
+  }
+
+  .demo-content > p {
+    min-height: 0;
   }
 
   .about-inner {

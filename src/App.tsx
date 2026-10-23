@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type FormEvent } from "react";
+import { createPortal } from "react-dom";
 
 type Project = {
   number: string;
@@ -10,6 +11,21 @@ type Project = {
   tags: string[];
   metric: string;
   tone: string;
+  url: string;
+  images: GalleryImage[];
+};
+
+type GalleryImage = {
+  src: string;
+  alt: string;
+};
+
+type DemoProject = {
+  title: string;
+  description: string;
+  tags: string[];
+  url: string;
+  images: GalleryImage[];
 };
 
 type ChatMessage = {
@@ -33,6 +49,12 @@ const projects: Project[] = [
     tags: ["Open WebUI", "Azure APIM", "Multi-model AI"],
     metric: "25K+ users",
     tone: "project-lime",
+    url: "https://genai.hku.hk",
+    images: [
+      { src: "/01-a-genai-chat.png", alt: "Enterprise GenAI chat interface" },
+      { src: "/01-b-genai-image-studio.png", alt: "GenAI image studio" },
+      { src: "/01-c-genai-dev-portal.png", alt: "HKU ITS API developer portal" },
+    ],
   },
   {
     number: "02",
@@ -49,6 +71,12 @@ const projects: Project[] = [
     tags: ["RAG", "n8n", "Azure AI Search"],
     metric: "7.8K+ conversations",
     tone: "project-blue",
+    url: "https://chatbots.hku.hk/aiHKUer",
+    images: [
+      { src: "/02-a-aihkuer.png", alt: "aiHKUer university assistant" },
+      { src: "/02-b-tpg-chatbot.png", alt: "Taught postgraduate admissions chatbot" },
+      { src: "/02-c-github-copilot-sdk.png", alt: "aiHKUer chat history interface" },
+    ],
   },
   {
     number: "03",
@@ -65,6 +93,12 @@ const projects: Project[] = [
     tags: ["TypeScript", "Portal UX", "Performance"],
     metric: "47K+ monthly users",
     tone: "project-coral",
+    url: "https://userguide.hku.hk/staffportal",
+    images: [
+      { src: "/03-a-staff-portal.png", alt: "HKU staff portal dashboard" },
+      { src: "/03-b-student-portal.png", alt: "HKU student portal dashboard" },
+      { src: "/03-student-portal-widgets-dark.png", alt: "Student portal widgets in dark mode" },
+    ],
   },
   {
     number: "04",
@@ -81,6 +115,49 @@ const projects: Project[] = [
     tags: [".NET / C#", "SQL", "Responsive UI"],
     metric: "1.29M+ page hits",
     tone: "project-lavender",
+    url: "https://userguide.hku.hk/hku-event-management-system-user-guide",
+    images: [
+      { src: "/04-a-ems-hdetail.png", alt: "Event Management System event details page" },
+      { src: "/04-b-ems-registration.png", alt: "Event Management System registration form" },
+    ],
+  },
+];
+
+const demoProjects: DemoProject[] = [
+  {
+    title: "University Course Generator",
+    description:
+      "A course-design workspace for turning a course brief into structured lectures, learning objectives, and teaching notes.",
+    tags: ["Course design", "AI", "Web app"],
+    url: "https://github.com/mphhohku/university-course-generator",
+    images: [
+      { src: "/github-01-a-homepage.png", alt: "Course Generator homepage and course brief form" },
+      { src: "/github-01-b-list.png", alt: "Course library with generated courses and starter briefs" },
+      { src: "/github-01-c-notes.png", alt: "Generated lecture notes and learning objectives" },
+    ],
+  },
+  {
+    title: "Ticket Master",
+    description:
+      "A local-only workspace for IT ticket resolution and knowledge management, with a responsive interface and AI-powered ticket summarization.",
+    tags: ["IT Support", "AI", "Web app"],
+    url: "https://github.com/mphhohku/ticket-master",
+    images: [
+      { src: "/github-02-a-homepage.png", alt: "Ticket Master homepage and ticket list" },
+      { src: "/github-02-b-knowledge.png", alt: "Ticket Master knowledge base and search" },
+    ],
+  },
+  {
+    title: "Chatbot-powered portfolio",
+    description:
+      "This portfolio pairs a responsive project showcase with an AI assistant that helps visitors explore my experience and work.",
+    tags: ["React", "AI assistant", "Portfolio"],
+    url: "https://github.com/mphhohku/marco-ho-portfolio",
+    images: [
+      { src: "/github-03-a-homepage.png", alt: "Portfolio chat assistant interface" },
+      { src: "/github-03-b-work.png", alt: "Portfolio work section with project cards" },
+      { src: "/github-03-c-demo.png", alt: "Portfolio about section with personal information" },
+    ],
   },
 ];
 
@@ -154,6 +231,173 @@ function ArrowIcon({ diagonal = false }: { diagonal?: boolean }) {
     >
       <path d="M4 10h11M10 4l6 6-6 6" />
     </svg>
+  );
+}
+
+function ProjectGallery({ images, title }: { images: GalleryImage[]; title: string }) {
+  const [activeImage, setActiveImage] = useState(0);
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+  const imageButtonRef = useRef<HTMLButtonElement>(null);
+
+  function showImage(nextIndex: number) {
+    setActiveImage((nextIndex + images.length) % images.length);
+  }
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    closeButtonRef.current?.focus();
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      imageButtonRef.current?.focus();
+    };
+  }, [lightboxOpen]);
+
+  useEffect(() => {
+    if (!lightboxOpen) return;
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        setLightboxOpen(false);
+      } else if (event.key === "ArrowLeft") {
+        setActiveImage((current) => (current - 1 + images.length) % images.length);
+      } else if (event.key === "ArrowRight") {
+        setActiveImage((current) => (current + 1) % images.length);
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [images.length, lightboxOpen]);
+
+  if (images.length === 0) {
+    return (
+      <div className="project-gallery project-gallery-empty" aria-label={`${title} screenshots`}>
+        <span>PROJECT SCREENSHOTS</span>
+        <p>Add 2–3 screenshots to this project&apos;s images in <code>src/App.tsx</code>.</p>
+      </div>
+    );
+  }
+
+  const image = images[activeImage];
+
+  return (
+    <>
+      <div className="project-gallery" aria-label={`${title} screenshots`}>
+        <button
+          ref={imageButtonRef}
+          className="gallery-image-button"
+          type="button"
+          aria-label={`View ${title} screenshot larger`}
+          onClick={() => setLightboxOpen(true)}
+        >
+          <img src={image.src} alt={image.alt} loading="lazy" />
+        </button>
+        {images.length > 1 && (
+          <>
+            <button
+              className="gallery-arrow gallery-previous"
+              type="button"
+              aria-label={`Previous ${title} screenshot`}
+              onClick={() => showImage(activeImage - 1)}
+            >
+              ‹
+            </button>
+            <button
+              className="gallery-arrow gallery-next"
+              type="button"
+              aria-label={`Next ${title} screenshot`}
+              onClick={() => showImage(activeImage + 1)}
+            >
+              ›
+            </button>
+            <div className="gallery-pagination" aria-label={`Screenshot ${activeImage + 1} of ${images.length}`}>
+              {images.map((galleryImage, index) => (
+                <button
+                  key={galleryImage.src}
+                  className={index === activeImage ? "is-active" : ""}
+                  type="button"
+                  aria-label={`Show screenshot ${index + 1} of ${images.length}`}
+                  aria-current={index === activeImage ? "true" : undefined}
+                  onClick={() => showImage(index)}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+      {lightboxOpen && createPortal(
+        <div
+          className="gallery-lightbox"
+          role="presentation"
+          onMouseDown={(event) => {
+            if (event.target === event.currentTarget) setLightboxOpen(false);
+          }}
+        >
+          <section
+            className="lightbox-dialog"
+            role="dialog"
+            aria-modal="true"
+            aria-label={`${title} screenshot viewer`}
+          >
+            <div className="lightbox-toolbar">
+              <span>{title} · {activeImage + 1} / {images.length}</span>
+              <button
+                ref={closeButtonRef}
+                className="lightbox-close"
+                type="button"
+                aria-label="Close image viewer"
+                onClick={() => setLightboxOpen(false)}
+              >
+                ×
+              </button>
+            </div>
+            <div className="lightbox-stage">
+              {images.length > 1 && (
+                <button
+                  className="lightbox-arrow"
+                  type="button"
+                  aria-label={`Previous ${title} screenshot`}
+                  onClick={() => showImage(activeImage - 1)}
+                >
+                  ‹
+                </button>
+              )}
+              <img src={image.src} alt={image.alt} />
+              {images.length > 1 && (
+                <button
+                  className="lightbox-arrow"
+                  type="button"
+                  aria-label={`Next ${title} screenshot`}
+                  onClick={() => showImage(activeImage + 1)}
+                >
+                  ›
+                </button>
+              )}
+            </div>
+            {images.length > 1 && (
+              <div className="lightbox-pagination" aria-label={`Screenshot ${activeImage + 1} of ${images.length}`}>
+                {images.map((galleryImage, index) => (
+                  <button
+                    key={galleryImage.src}
+                    className={index === activeImage ? "is-active" : ""}
+                    type="button"
+                    aria-label={`Show screenshot ${index + 1} of ${images.length}`}
+                    aria-current={index === activeImage ? "true" : undefined}
+                    onClick={() => showImage(index)}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
+        </div>,
+        document.body,
+      )}
+    </>
   );
 }
 
@@ -314,6 +558,7 @@ function App() {
         </a>
         <nav className="main-nav" aria-label="Main navigation">
           <a href="#work">Work</a>
+          <a href="#demos">GitHub demos</a>
           <a href="#about">About</a>
           <a href="#skills">Toolkit</a>
           <a className="nav-contact" href="#contact">Let&apos;s talk <ArrowIcon diagonal /></a>
@@ -414,9 +659,45 @@ function App() {
                 <div className="project-tags">
                   {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
                 </div>
+                <a className="button button-primary project-visit-link" href={project.url} target="_blank" rel="noreferrer">
+                  Visit project <ArrowIcon diagonal />
+                </a>
               </div>
+              <ProjectGallery images={project.images} title={project.title} />
               <div className="project-decoration" aria-hidden="true">
                 <span>{project.number}</span>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <section className="demos-section section-wrap" id="demos">
+        <div className="section-heading">
+          <div>
+            <div className="eyebrow section-kicker">GITHUB PROJECTS</div>
+            <h2>Built on my own time.</h2>
+          </div>
+          <p>Independent projects that explore useful ideas, thoughtful interfaces, and applied AI.</p>
+        </div>
+        <div className="demo-grid">
+          {demoProjects.map((project) => (
+            <article className="demo-card" key={project.title}>
+              <ProjectGallery images={project.images} title={project.title} />
+              <div className="demo-content">
+                <div className="demo-card-kicker">PERSONAL PROJECT</div>
+                <h3>{project.title}</h3>
+                <p>{project.description}</p>
+                <div className="project-tags">
+                  {project.tags.map((tag) => <span key={tag}>{tag}</span>)}
+                </div>
+                {project.url ? (
+                  <a className="demo-link" href={project.url} target="_blank" rel="noreferrer">
+                    Visit project <ArrowIcon diagonal />
+                  </a>
+                ) : (
+                  <span className="demo-link demo-link-pending">Project link to be added</span>
+                )}
               </div>
             </article>
           ))}
