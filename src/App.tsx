@@ -148,6 +148,17 @@ const demoProjects: DemoProject[] = [
     ],
   },
   {
+    title: "Project Lightfield",
+    description:
+      "A static web app for lightning talks and hour-long workshops, with interactive quizzes, polls, and live Q&A sessions.",
+    tags: ["Enterprise training", "AI", "Web app"],
+    url: "https://github.com/mphhohku/project-lightfield",
+    images: [
+      { src: "/github-04-a-homepage.png", alt: "Project Lightfield homepage and event list" },
+      { src: "/github-04-b-demo.png", alt: "Project Lightfield demo with interactive elements" },
+    ],
+  },
+  {
     title: "Chatbot-powered portfolio",
     description:
       "This portfolio pairs a responsive project showcase with an AI assistant that helps visitors explore my experience and work.",
